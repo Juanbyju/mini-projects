@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+
+
+    <title>Alarm Clock</title>
+    <style>
+    .clock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: #f2f2f2;
+}
+
+.clock-face {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 500px;
+  height: 200px;
+  border-radius: 50%;
+  background-color: #fff;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  margin-bottom: 50px;
+}
+
+.clock-face span {
+  font-size: 60px;
+  font-weight: bold;
+  color: #333;
+  margin: 0 10px;
+}
+
+.alarm {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 50px;
+}
+
+.alarm input,
+.alarm select,
+.alarm button {
+  width:95px;
+  font-size: 20px;
+  padding: 10px;
+  margin: 5px;
+  border-radius: 5px;
+  border: none;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.alarm button {
+  background-color: #333;
+  color: #fff;
+  cursor: pointer;
+}
+
+.alarms {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.alarms h2 {
+  margin-bottom: 10px;
+}
+
+.alarms ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.alarms li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 300px;
+  font-size: 20px;
+  padding: 10px;
+  margin: 5px;
+  border-radius: 5px;
+  background-color: #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.alarms li button {
+  background-color: #333;
+  color: #fff;
+  cursor: pointer;
+}
+
+
+    </style>
+  </head>
+  <body>
+
+  <div class="clock">
+    <div class="clock-face">
+      <span class="hours"></span>
+      <span>:</span>
+      <span class="minutes"></span>
+      <span>:</span>
+      <span class="seconds"></span>
+      <span class="am-pm"></span>
+    </div>
+    <div class="alarm">
+      <h2>Set Alarm</h2>
+      <input type="number" id="alarm-hours" min="1" max="12" placeholder="Hours">
+      <input type="number" id="alarm-minutes" min="0" max="59" placeholder="Minutes">
+      <input type="number" id="alarm-seconds" min="0" max="59" placeholder="Seconds">
+      <select id="alarm-am-pm">
+        <option value="AM">AM</option>
+        <option value="PM">PM</option>
+      </select>
+      <button id="set-alarm">Set Alarm</button>
+    </div>
+    <div class="alarms">
+      <h2>Alarms</h2>
+      <ul id="alarms-list"></ul>
+    </div>
+  </div>
+  
+    
+
+    <script>
+      // Get elements from the DOM
+const hoursElement = document.querySelector('.hours');
+const minutesElement = document.querySelector('.minutes');
+const secondsElement = document.querySelector('.seconds');
+const amPm = document.querySelector('.am-pm');
+const alarmHoursElement = document.getElementById('alarm-hours');
+const alarmMinutesElement = document.getElementById('alarm-minutes');
+const alarmSecondsElement = document.getElementById('alarm-seconds');
+const alarmAmPmElement = document.getElementById('alarm-am-pm');
+const setAlarmButton = document.getElementById('set-alarm');
+const alarmsListElement = document.getElementById('alarms-list');
+
+
+
+
+// Update the clock every second
+setInterval(() => {
+  const now = new Date();
+  let hours = now.getHours();
+  let minutes = now.getMinutes();
+  let seconds = now.getSeconds();
+  const amPmValue = hours >= 12 ? 'PM' : 'AM';
+
+  // Convert hours to 12-hour format
+  hours = hours % 12 || 12;
+
+  // Add leading zeros to minutes and seconds
+  minutes = minutes < 10 ? `0${minutes}` : minutes;
+  seconds = seconds < 10 ? `0${seconds}` : seconds;
+  
+
+  // Update the clock face
+  hoursElement.textContent = hours;
+  minutesElement.textContent = minutes;
+  secondsElement.textContent = seconds;
+  amPm.textContent = amPmValue;
+
+  // Check for alarms
+  checkAlarms();
+}, 1000);
+
+// Set an alarm
+setAlarmButton.addEventListener('click', () => {
+  const hours = alarmHoursElement.value;
+  const minutes = alarmMinutesElement.value;
+  const seconds = alarmSecondsElement.value;
+  const amPm = alarmAmPmElement.value;
+  const alarmTime = `${hours}:${minutes}:${seconds} ${amPm}`;
+
+  // Create a new alarm element
+  const alarmElement = document.createElement('li');
+  const alarmText = document.createTextNode(alarmTime);
+  const deleteButton = document.createElement('button');
+  const deleteText = document.createTextNode('Delete');
+  deleteButton.appendChild(deleteText);
+
+  // Add the alarm to the list
+  alarmElement.appendChild(alarmText);
+  alarmElement.appendChild(deleteButton);
+  alarmsListElement.appendChild(alarmElement);
+
+  // Delete the alarm when the delete button is clicked
+  deleteButton.addEventListener('click', () => {
+    alarmElement.remove();
+  });
+});
+
+function checkAlarms() {
+  const now = new Date();
+  const alarms = document.querySelectorAll('#alarms-list li');
+  
+  alarms.forEach((alarm) => {
+    if (alarm.childNodes[0].textContent === `${now.getHours()}:${now.getMinutes()}:${now.getSeconds()} ${now.getHours() >= 12 ? 'PM' : 'AM'}`) {
+      alert('Alarm!');
+      setTimeout(() => {
+        alarm.remove();
+      }, 1000);
+    }
+  })
+
+}
+
+
+
+
+
+
+    </script>
+  </body>
+</html>
+
